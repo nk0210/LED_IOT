@@ -1,0 +1,36 @@
+// Pin Definitions
+const int ldrPin = A0;       // LDR output connected to Analog Pin A0
+const int irPin = 2;         // IR Sensor output connected to Digital Pin 2
+const int ledPin = 13;       // LED connected to Digital Pin 13
+
+void setup() {
+  pinMode(ldrPin, INPUT);     // LDR as input (not strictly needed for analogRead, but safe)
+  pinMode(irPin, INPUT);      // IR sensor as input
+  pinMode(ledPin, OUTPUT);    // LED as output
+  
+  Serial.begin(9600);         // Initialize serial monitor (for testing/debugging)
+}
+
+void loop() {
+  int ldrValue = analogRead(ldrPin);   // Read value from LDR (0-1023)
+  int irValue = digitalRead(irPin);    // Read value from IR sensor (HIGH or LOW)
+
+  Serial.print("LDR Value: ");
+  Serial.print(ldrValue);
+  Serial.print(" | IR Value: ");
+  Serial.println(irValue);
+
+  // Condition to check whether it is dark
+  if (ldrValue > 600) {  // Nighttime (LDR value high -> dark)
+    if (irValue == LOW) {    // Vehicle detected (object near IR sensor)
+      digitalWrite(ledPin, HIGH);   // Turn ON LED
+    } else {
+      digitalWrite(ledPin, LOW);    // No vehicle, LED OFF
+    }
+  } 
+  else {
+    digitalWrite(ledPin, LOW);    // Daytime, LED always OFF
+  }
+
+  delay(100);  // Small delay to stabilize readings
+}
